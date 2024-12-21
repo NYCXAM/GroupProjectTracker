@@ -1,29 +1,32 @@
-from flask import Flask
+from flask import Flask, request, jsonify
 from pymongo import MongoClient
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 # MongoDB connection string
 client = MongoClient("mongodb+srv://matths:bVmVFKxNebbBdn0F@groupprojectmanager.vj2m4.mongodb.net/?retryWrites=true&w=majority&appName=GroupProjectManager")
 db = client["GroupProjectManager"]
 
-@app.route('/')
-def hello_world():  
-    # testing database
-    # Reference a collection in your database
-    collection = db.get_collection('tasks')
-    
-    # Check if the collection is empty
-    document_count = collection.count_documents({})
-    if document_count == 0:
-        # Insert a test document if the collection is empty
-        test_document = {"task": "Test Task", "description": "This is a test task to check the database connection"}
-        collection.insert_one(test_document)
-        return "Inserted a test document into the collection!"
+@app.route('/create_project', methods=['POST'])
+def create_project():
+    # Get project data from request
+    project_data = request.json
 
-    # Retrieve and display a document from the collection
-    task = collection.find_one({})
-    return f"Database is connected! Retrieved task: {task}"
+    # Insert project data into database
+    project = {
+        "name": project_data["name"],
+        "deadline":  project_data["deadline"],
+        "num_members": project_data["num_members"],
+        "tasks": []
+    }
+
+    result = db.projects.insert_one(project)
+
+    # Return success message with project ID
+    return jsonify({"message": "Project created successfully!", "project_id": str(result.inserted_id)}), 201
+
 
 
 if __name__ == '__main__':

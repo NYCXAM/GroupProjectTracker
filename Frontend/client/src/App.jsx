@@ -4,32 +4,80 @@ import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [projectName, setProjectName] = useState('');
+  const [deadline, setDeadline] = useState('');
+  const [numMembers, setNumMembers] = useState('');
+  const [message, setMessage] = useState('');
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    // Prepare project data
+    const projectData = {
+      name: projectName,
+      deadline: deadline,
+      num_members: numMembers
+    };
+
+    try {
+      // Send POST request to Flask backend
+      const response = await fetch('http://localhost:5000/create_project', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(projectData) // Sending data as JSON
+      });
+
+      // Handle response
+      const result = await response.json();
+      setMessage(result.message); // Set the message to be displayed on success
+    } catch (error) {
+      console.error('Error:', error);
+      setMessage('Error creating project!');
+    }
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div>
+      <h1>Group Project Manager</h1>
+      <form onSubmit={handleSubmit}>
+        <label>
+          Project Name:
+          <input
+            type="text"
+            value={projectName}
+            onChange={(e) => setProjectName(e.target.value)}
+            required
+          />
+        </label>
+        <br />
+        <label>
+          Deadline:
+          <input
+            type="date"
+            value={deadline}
+            onChange={(e) => setDeadline(e.target.value)}
+            required
+          />
+        </label>
+        <br />
+        <label>
+          Number of Members:
+          <input
+            type="number"
+            value={numMembers}
+            onChange={(e) => setNumMembers(e.target.value)}
+            required
+          />
+        </label>
+        <br />
+        <button type="submit">Create Project</button>
+      </form>
+
+      {message && <p>{message}</p>}
+    </div>
+  );
 }
 
-export default App
+export default App;
