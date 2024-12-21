@@ -21,7 +21,7 @@ function App() {
 
     try {
       // Send POST request to Flask backend
-      const response = await fetch('http://localhost:5000/create_project', {
+      const response = await fetch('http://127.0.0.1:5000/create_project', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

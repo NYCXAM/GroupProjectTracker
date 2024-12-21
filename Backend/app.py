@@ -1,12 +1,14 @@
 from flask import Flask, request, jsonify
 from pymongo import MongoClient
 from flask_cors import CORS
+import certifi
+
 
 app = Flask(__name__)
 CORS(app)
 
 # MongoDB connection string
-client = MongoClient("mongodb+srv://matths:bVmVFKxNebbBdn0F@groupprojectmanager.vj2m4.mongodb.net/?retryWrites=true&w=majority&appName=GroupProjectManager")
+client = MongoClient("mongodb+srv://matths:bVmVFKxNebbBdn0F@groupprojectmanager.vj2m4.mongodb.net/?retryWrites=true&w=majority&appName=GroupProjectManager", tlsCAFile=certifi.where())
 db = client["GroupProjectManager"]
 
 @app.route('/create_project', methods=['POST'])
@@ -30,4 +32,4 @@ def create_project():
 
 
 if __name__ == '__main__':
-    app.run(debug = True)
+    app.run(debug = True, host='localhost', port=5000)
