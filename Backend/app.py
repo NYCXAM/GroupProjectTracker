@@ -7,6 +7,10 @@ app = Flask(__name__)
 client = MongoClient("mongodb+srv://matths:bVmVFKxNebbBdn0F@groupprojectmanager.vj2m4.mongodb.net/?retryWrites=true&w=majority&appName=GroupProjectManager")
 db = client["GroupProjectManager"]
 
+
+@app.route('/test')
+def test():
+    return "Hello, World!"
 @app.route('/')
 def hello_world():  
     # testing database
@@ -27,4 +31,4 @@ def hello_world():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug = True)
