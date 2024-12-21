@@ -1,14 +1,18 @@
 from flask import Flask, request, jsonify
 from pymongo import MongoClient
 from flask_cors import CORS
+import os
+from dotenv import load_dotenv
 import certifi
 
+load_dotenv('config.env')
 
 app = Flask(__name__)
 CORS(app)
 
 # MongoDB connection string
-client = MongoClient("mongodb+srv://matths:bVmVFKxNebbBdn0F@groupprojectmanager.vj2m4.mongodb.net/?retryWrites=true&w=majority&appName=GroupProjectManager", tlsCAFile=certifi.where())
+MONGODB_URL = os.getenv('MONGODB_URL')
+client = MongoClient(MONGODB_URL, tlsCAFile=certifi.where())
 db = client["GroupProjectManager"]
 
 @app.route('/create_project', methods=['POST'])
